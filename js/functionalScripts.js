@@ -221,7 +221,13 @@ function loadReference(book,chapter,verse){
 			//chapterText += hebrewObject[book][chapterInArray][verseNumber];
 			chapterText += hebrewObject[book][chapterInArray][verseNumber].toString();
 			chapterText += "</div>";
-		}
+		} else if(greekObject[book] && greekObject[book][chapterInArray][verseNumber]) {
+			chapterText += "<div class='hebrew'>";
+			$.each( greekObject[book][chapterInArray][verseNumber], function( wordNumber, wordObject ) {
+				chapterText += '<span class="' + wordObject.lemma + '">' + wordObject.word + '</span> ';
+			});
+			chapterText += "</div>";
+		}		
 		chapterText += '</div>';
 		chapterText += '</li>';
 	});
