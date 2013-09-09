@@ -38,39 +38,28 @@
 	}
 	function subdueColor(color, subdueColorBy){
 		return parseInt(color/subdueColorBy);
-	} 
-	function highlightStrongsNumber(strongsNumber, type) {
-		var strongsNumberAsId = strongsNumber.replace(/ /gi,"");
-		var strongsInt = parseInt(strongsNumber.substring(2,strongsNumber.length)/4);
-		if(!$('#'+strongsNumberAsId).length > 0) {
-			if(strongsInt > 0) {
-				var subdueColorBy = $('#subdueColorBy').val();
-				var color = colors[strongsInt];
-				var colorArray = color.split('(')[1].split(')')[0].split(',')
-				var red = subdueColor(colorArray[0], subdueColorBy);
-				var green = subdueColor(colorArray[1], subdueColorBy);
-				var blue = subdueColor(colorArray[2], subdueColorBy);
-				var newColor = createColorCode(red,green,blue);
-				var strongsStyle = '#'+strongsNumber+' #verse span.'+strongsNumber+', #'+strongsNumber+' .'+strongsNumber+', .'+strongsNumber+' {color:#fff;background:'+newColor+';}';
-		    }
-			var strongsTracking = '';
-			strongsTracking += '<div class="collapsable" id="'+strongsNumberAsId+'"><style></style><h2 class="'+strongsNumber+'">'+strongsNumber+' <a class="remove" href="#"></a></h2></div>';
-			$('#referenceTracking').append(strongsTracking);
-			if(strongsInt > 0) {
-        	    $('#'+strongsNumber+' style').html(strongsStyle);
-            	$('#changeColor #colorFormStrongsNumber').val(strongsNumber);
-	            color = $('#'+strongsNumber+' .'+strongsNumber).css("background-color");
-				$('#changeColor #colorFormColor').val(color);
-				$('#colorSelector div').css('background',newColor);
-				$('#colorSelector').ColorPickerSetColor(RGBtoHEX(newColor));
-		        $('#wordControlPanel').hide();
-    	        $('#referenceTracking h2').hoverIntent(hoverIntentConfig);
-    	    }
-        }
-		if(strongsInt > 0) {
-			wordTree(strongsNumber);
-		}
 	}
+	
+	function getStrongsColor( strongsInt ) {
+/*		var subdueColorBy = $('#subdueColorBy').val();
+		var color = colors[strongsInt];
+		var colorArray = color.split('(')[1].split(')')[0].split(',')
+		var red = subdueColor(colorArray[0], subdueColorBy);
+		var green = subdueColor(colorArray[1], subdueColorBy);
+		var blue = subdueColor(colorArray[2], subdueColorBy);
+		return createColorCode(red,green,blue);*/
+		//Using HSL there are 360 colors with different % saturation and lightness
+		//There are about 2135 different word families
+		var theSizeOfAColorSegment = 360 / 8000,
+			hue = strongsInt * theSizeOfAColorSegment;
+
+		return 'hsl( ' + hue + ', 50%, 50% )';
+	}
+	
+	function getStrongsStyle( strongsNumber, newColor ) {
+		return '.' + strongsNumber + ' {color:#fff;background:' + newColor + ' !important;}';	
+	}
+
 	function searchByStrongsNumber(strongsNumberString) {
 		var startDate = new Date();
 		var references = '';
@@ -192,64 +181,26 @@ var findArrayElementsInString = function(array, string, searchType) {
 	}
 }
 
-
-function loadReference(book,chapter,verse){
-	chapterInArray = chapter - 1;
-	verseInArray = verse - 1
-	context = false;
-	var reference = book + ' ' + (chapter) + ':' + (verse);
-	$('head title').text(reference);
-	var chapterText = "<h1>"+reference+"</h1>";
-	chapterText += '<ol id="start">';
-	$.each(bibleObject[book][chapterInArray], function(verseNumber, verseText) {
-		chapterText += '<li>';
-		chapterText += '<div class="wrapper"';
-		if(verseNumber === verseInArray) {
-			chapterText += ' id="current"';
-		}
-		if(verseNumber === verseInArray-5) {
-			chapterText += ' id="context"';
-			context = true;
-		}
-		chapterText += '>';
-		chapterText += '<div class="english">';
-		chapterText += verseText;
-		chapterText += "</div>";
-		//Load hebrew
-		if(hebrewObject[book] && hebrewObject[book][chapterInArray][verseNumber]) {
-			chapterText += "<div class='hebrew'>";
-			//chapterText += hebrewObject[book][chapterInArray][verseNumber];
-			chapterText += hebrewObject[book][chapterInArray][verseNumber].toString();
-			chapterText += "</div>";
-		} else if(greekObject[book] && greekObject[book][chapterInArray][verseNumber]) {
-			chapterText += "<div class='hebrew'>";
-			$.each( greekObject[book][chapterInArray][verseNumber], function( wordNumber, wordObject ) {
-				chapterText += '<span class="' + wordObject.lemma + '">' + wordObject.word + '</span> ';
-			});
-			chapterText += "</div>";
-		}		
-		chapterText += '</div>';
-		chapterText += '</li>';
-	});
-
-	chapterText += '</ol>';
-	chapterText = chapterText.replace(/<w/gi,'<span').replace(/<\/w>/gi,'</span> ').replace(/<q who="Jesus" marker="">/gi,'').replace(/<\/q>/gi,'');
-	$('#verse').html(chapterText);
-	$.each($('#verse .hebrew span'),function() {
-		if($(this).attr('lemma')){
-			var newLemma = 'H0' + $(this).attr('lemma');
-			$(this).attr('lemma',newLemma);
-		}
-	});
-	$.each($('#verse span'),function() {
-		if($(this).attr('lemma')){
-			$(this).addClass($(this).attr('lemma').replace(/strong:/gi,''));
-		}
-	});
-	$('#verse ol > li span, #strongsTracking ul > li span').hoverIntent(hoverIntentConfig);
-	scrollVerseTo($('#context'));
-	maintainState(book,chapter,verse,context);
-
+function createWordString( wordObject, language ) {
+	var wordString = '';
+ 				var family = '';
+				wordString += '<span'; 
+				wordString += ' class="' + wordObject.lemma + '"';
+				wordString += ' title="' + wordObject.lemma;
+				if ( wordObject.hasOwnProperty( 'morph' ) ) {
+					wordString += ' ' + wordObject.morph;
+				}
+				wordString += '"';
+				wordString += ' data-word="' + wordObject.word + '"';
+				wordString += ' data-lemma="' + wordObject.lemma + '"';
+				wordString += ' data-language="' + language + '"';
+				wordString += ' data-range="verse"';
+				wordString += ' data-family="' + family + '"';
+				if ( wordObject.hasOwnProperty( 'morph' ) ) {
+					wordString += ' data-morph="' + wordObject.morph + '"';
+				}
+				wordString += '>' + wordObject.word + '</span> ';
+				return wordString;
 }
 var hoverIntentConfig = {
     sensitivity: 1, // number = sensitivity threshold (must be 1 or higher)
@@ -261,7 +212,10 @@ var hoverIntentConfig = {
 
 /*Word panel*/
 function initializeWordPanel(spanObject) {
-	var strongsNumberArray = spanObject.attr('class').split(' ');
+	if ( ! spanObject.data('lemma') ) {
+		return false;
+	}
+	var strongsNumberArray = spanObject.data('lemma').split(' ');
 	var strongsNumberPrefix = '';
 	var strongsNumberDisplay = '';
 	var lemma = '';
@@ -273,12 +227,13 @@ function initializeWordPanel(spanObject) {
 		if(strongsNumber !== 'added' && strongsNumber !== 'trans-change' ) {
 			strongsNumberDisplay = strongsNumber;
 			/*convert*/
-			strongsNumberPrefix = strongsNumber.substring(0,1);
+			osidStrongsNumber = strongsNumber;
+/*			strongsNumberPrefix = strongsNumber.substring(0,1);
 			if(strongsNumberPrefix==="H") {
 				osidStrongsNumber = strongsNumberPrefix + strongsNumber.substring(2,strongsNumber.length);
 			} else {
 				osidStrongsNumber = strongsNumberPrefix + strongsNumber.substring(1,strongsNumber.length);
-			}
+			}*/
 			lemma = stripPointing(strongsDictionary[osidStrongsNumber]["lemma"]);
 			strongsDef = strongsDictionary[osidStrongsNumber]["strongs_def"];
 			kjvDef = strongsDictionary[osidStrongsNumber]["kjv_def"];
@@ -291,8 +246,46 @@ function initializeWordPanel(spanObject) {
 			infoObject.find('.wordControlPanelStrongsDef').text(strongsDef);
 			infoObject.find('.wordControlPanelKJVDef').text(kjvDef);
 		}
+
+		var roots = '';
+		if(typeof(strongsObject[strongsNumber]) != "undefined"){
+	        $.each(strongsObject[strongsNumber], function(index,rootNumber){
+    	        roots += '<a href="#search='+rootNumber+'" class="'+rootNumber+'">'+rootNumber+'</a><br />';
+        	});
+		}
+		var branches = '';
+		$.each(strongsObject, function(strongsObjectKey, strongsObjectRoot){
+			$.each(strongsObjectRoot, function(strongsObjectRootKey,strongsObjectRootValue){
+				if(strongsObjectRootValue==strongsNumber){
+					branches += '<a href="#search='+strongsObjectKey+'" class="'+strongsObjectKey+'">' + strongsObjectKey + '</a><br />';
+				}
+			});
+		});
+		wordTreeString = '';
+		if(roots == ''){
+			wordTreeString += '<p>no roots</p>';
+		} else {
+			wordTreeString += 'roots:<br />' + roots + '</p>';
+		}
+		if(branches == ''){
+			wordTreeString += '<p>no branches</p>';
+		} else {
+			wordTreeString += 'branches:<br />' + branches + '</p>';
+		}
+		infoObject.find('#wordTree').html(wordTreeString);
+		
+		var strongsInt = parseInt(strongsNumber.substring(1,strongsNumber.length), 10);
+		var newColor = getStrongsColor( strongsInt );
+		strongsStyle = getStrongsStyle( strongsNumber, newColor );
+
+        $('#wordControlPanel').find('style').html(strongsStyle);
+
+	
 	});
-	showWordPanel(spanObject);
+	
+	
+
+	//showWordPanel(spanObject);
 }
 function showWordPanel(spanObject) {
 
@@ -322,7 +315,7 @@ function showWordPanel(spanObject) {
 	$('#wordControlPanel .definitions').addClass('hide');
 }
 function hideWordPanel() {
-	$('#wordControlPanel.not-active').hide();
+	//$('#wordControlPanel.not-active').hide();
 }
 /*Word Tree*/
 function wordTree(strongsNumber){
@@ -361,7 +354,7 @@ function goToReference(book,chapter,verse){
 	$('select#chapterSelect').val(chapter);
 	$('select#verseSelect').val(verse).change();
 }
-function maintainState(book,chapter,verse,context){
+function maintainState(book,chapter,verse){
 	$('.dynamic').each(function(){
 		if($(this).hasClass('chapterSelect')){
 			var size = bibleObject[book].length;
@@ -400,111 +393,18 @@ function markReference(referenceLink){
     var href=referenceLink.attr('id','currentRef').find('a').attr('href');//this is a stupid way of doing it.
     window.location.hash = href;
 }
-function scrollVerseTo(verse) {
-	$('#verse').closest('.panel').scrollTop(0);
-	if(verse.length > 0) {
-		$('#verse').closest('.panel').scrollTop(verse.offset().top);
-	}
-}
 /*Helper Methods*/
 function timer(startDate, endDate){
 	var startTime = startDate.getTime();
 	var endTime = endDate.getTime();
 	if(typeof(console) !== 'undefined'){
-		console.log(endTime - startTime);
+		console.log('time: ' + ( endTime - startTime ) );
 	}
 }
 function createColorCode(red,green,blue){
 	return 'rgb('+red+','+green+','+blue+')';
 }
-/* Create Color Array*/
-var colors = new Array();
-var i = 0;
-//red to green			
-var red = 255;
-var green = 0;
-var blue = 0;
-while(red > 0){
-	red = red - 1;
-	green = green + 1;
-	colors[i] = createColorCode(red,green,blue);
-	i++
-}
-//green to blue
-var red = 0;
-var green = 255;
-var blue = 0;
 
-while(green > 0){
-	green = green - 1;
-	blue = blue + 1;
-	colors[i] = createColorCode(red,green,blue);
-	i++
-}
-//red to blue
-var red = 255;
-var green = 0;
-var blue = 0;
-while(red > 0){
-	red = red - 1;
-	blue = blue + 1;
-	colors[i] = createColorCode(red,green,blue);
-	i++
-}
-//Red to Yellow
-var red = 255;
-var green = 0;
-var blue = 0;
-while(green < 255){
-	green = green + 1;
-	colors[i] = createColorCode(red,green,blue);
-	i++
-}
-//Yellow to Green
-var red = 255;
-var green = 255;
-var blue = 0;
-while(red > 1){
-	red = red - 1;
-	colors[i] = createColorCode(red,green,blue);
-	i++
-}
-//Greens to Turqoise
-var red = 0;
-var green = 255;
-var blue = 0;
-while(blue < 255){
-	blue = blue + 1;
-	colors[i] = createColorCode(red,green,blue);
-	i++
-}
-//Turqoise to Blue
-var red = 0;
-var green = 255;
-var blue = 255;
-while(green > 0){
-	green = green - 1;
-	colors[i] = createColorCode(red,green,blue);
-	i++
-}
-//red to Purple
-var red = 255;
-var green = 0;
-var blue = 0;
-while(blue < 255){
-	blue = blue + 1;
-	colors[i] = createColorCode(red,green,blue);
-	i++
-}
-//Purple to blue
-var red = 255;
-var green = 0;
-var blue = 255;
-while(blue > 0){
-	blue = blue - 1;
-	colors[i] = 'rgb('+red+','+green+','+blue+')';
-	i++
-}
 
 function stripPointing(word) {
 var cleanWord = word.replace(/֑/gi,'')
