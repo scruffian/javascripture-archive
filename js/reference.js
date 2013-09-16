@@ -79,7 +79,7 @@
 					$anchorVerse = $('.reference:last-child ol.wrapper li:last-child');
 				}
 				anchorPointSelector = '#' + $anchorVerse.attr('id');
-				offset = $bodyOffset - $anchorVerse.offset().top - - $('.dock').height();
+				offset = $bodyOffset - $anchorVerse.offset().top + $('.dock').height();
 			}
 
 			return [offset, anchorPointSelector];
@@ -219,13 +219,12 @@
 	    } else {
 	        var parameterPairArray = hash.split('&');
 	        //this is bad
-	        if ( parameterPairArray ) {
+	        if ( parameterPairArray.length > 1 ) {
 				var book = parameterPairArray[0].split('=')[1];
-		        var chapter = parseInt(parameterPairArray[1].split('=')[1]);
+		        var chapter = parseInt(parameterPairArray[1].split('=')[1], 10);
+		        var verse = 1;
 		        if ( parameterPairArray[2] ) {
-		            var verse = parseInt(parameterPairArray[2].split('=')[1]);
-		        } else {
-		        	verse = 1;
+		            verse = parseInt(parameterPairArray[2].split('=')[1], 10);
 		        }
 		        reference.load( {
 			        book: book,
@@ -246,16 +245,17 @@
 	
 	$( '#reference' ).scrollStopped( function() {
 		var offsetTop = $( '.dock' ).height() - $( '#verse' ).offset().top,
-		    verseHeight = $( '#verse' ).height() - $( window ).height() + $( '.dock' ).height();
+		    verseHeight = $( '#verse' ).height() - $( window ).height() + $( '.dock' ).height(),
+		    anchoringData;
 
 		if ( offsetTop <= 0 ) {
 			var prev = $( '.three-references' ).data( 'prev' );
-			var anchoringData = reference.getAnchoringData( 'prev' );
+			anchoringData = reference.getAnchoringData( 'prev' );
 			reference.load( prev ).anchorReference( anchoringData );
 		}
 		if ( offsetTop >= verseHeight ) {
 			var next = $( '.three-references' ).data( 'next' );
-			var anchoringData = reference.getAnchoringData( 'next' );
+			anchoringData = reference.getAnchoringData( 'next' );
 			reference.load( next ).anchorReference( anchoringData );
 		}
 	});
