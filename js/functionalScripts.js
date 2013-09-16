@@ -181,27 +181,6 @@ var findArrayElementsInString = function(array, string, searchType) {
 	}
 }
 
-function createWordString( wordObject, language ) {
-	var wordString = '';
- 				var family = '';
-				wordString += '<span'; 
-				wordString += ' class="' + wordObject.lemma + '"';
-				wordString += ' title="' + wordObject.lemma;
-				if ( wordObject.hasOwnProperty( 'morph' ) ) {
-					wordString += ' ' + wordObject.morph;
-				}
-				wordString += '"';
-				wordString += ' data-word="' + wordObject.word + '"';
-				wordString += ' data-lemma="' + wordObject.lemma + '"';
-				wordString += ' data-language="' + language + '"';
-				wordString += ' data-range="verse"';
-				wordString += ' data-family="' + family + '"';
-				if ( wordObject.hasOwnProperty( 'morph' ) ) {
-					wordString += ' data-morph="' + wordObject.morph + '"';
-				}
-				wordString += '>' + wordObject.word + '</span> ';
-				return wordString;
-}
 var hoverIntentConfig = {
     sensitivity: 1, // number = sensitivity threshold (must be 1 or higher)
     interval: 250, // number = milliseconds for onMouseOver polling interval

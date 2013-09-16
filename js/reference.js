@@ -159,6 +159,28 @@
 		return chapterText;
 	}
 	
+	function createWordString( wordArray, language ) {
+		var wordString = '';
+		var family = '';
+		wordString += '<span'; 
+		wordString += ' class="' + wordArray[1] + '"';
+		wordString += ' title="' + wordArray[1];
+		if ( wordArray[2] ) {
+			wordString += ' ' + wordArray[2];
+		}
+		wordString += '"';
+		wordString += ' data-word="' + wordArray[0] + '"';
+		wordString += ' data-lemma="' + wordArray[1] + '"';
+		wordString += ' data-language="' + language + '"';
+		wordString += ' data-range="verse"';
+		wordString += ' data-family="' + family + '"';
+		if ( wordArray[2] ) {
+			wordString += ' data-morph="' + wordArray[2] + '"';
+		}
+		wordString += '>' + wordArray[0] + '</span> ';
+		return wordString;
+	}
+	
 	function getOffsetChapter( reference, offset) {
 		var book = reference.book,
 		    chapter = reference.chapter,
