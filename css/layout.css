@@ -79,12 +79,10 @@ a.word-tree {
 .reference span:hover {
   /*	color: #fff;*/
 
-  box-shadow: 0 0 5px #000;
 }
 .reference span.dwyer-added:hover,
 .reference span.added:hover {
   background: none;
-  box-shadow: none;
 }
 #verse.isolate {
   color: #999;
@@ -262,7 +260,6 @@ nav ul li:hover {
 }
 #wordControlPanel {
   background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 0 5px black;
   bottom: 0;
   display: block;
   left: 201px;
@@ -417,7 +414,6 @@ dvnnm {
   background: #fff;
   border-bottom-left-radius: 1em;
   border-bottom-right-radius: 1em;
-  box-shadow: 0 0 10px #000;
   margin: 0 auto;
   overflow: auto;
   padding: 1em;
@@ -455,9 +451,6 @@ input[type=submit] {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   color: #fff;
-  box-shadow: 10px 10px 5px #000;
-  -webkit-box-shadow: 1px 1px 2px #000;
-  -moz-box-shadow: 1px 1px 2px #000;
   padding: 3px;
 }
 form input[type=checkbox] {
