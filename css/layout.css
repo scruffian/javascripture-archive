@@ -79,6 +79,7 @@ a.word-tree {
 .reference span:hover {
   /*	color: #fff;*/
 
+  background: #eff;
 }
 .reference span.dwyer-added:hover,
 .reference span.added:hover {
@@ -260,16 +261,31 @@ nav ul li:hover {
 }
 #wordControlPanel {
   background: rgba(255, 255, 255, 0.9);
+  border-top: 1px solid #000;
   bottom: 0;
   display: block;
   left: 201px;
   right: 202px;
-  overflow: hidden;
   position: fixed;
   z-index: 999;
   color: #000;
 }
-.control-panel .template {
+.wordControlPanel {
+  clear: both;
+}
+.wordControlPanel .close {
+  background: #000;
+  color: #fff;
+  font-size: 15px;
+  height: 18px;
+  line-height: 1em;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 14px;
+  text-align: center;
+}
+.wordControlPanelTemplate {
   display: none;
 }
 .control-panel .duplicated {
@@ -323,7 +339,8 @@ nav ul li:hover {
   width: 100px;
   height: 100px;
 }
-.hide {
+.hide,
+.template {
   display: none;
 }
 note {
@@ -409,11 +426,14 @@ dvnnm {
   left: 0;
   right: 0;
   height: 0;
+  z-index: 9;
 }
 .popup .content {
   background: #fff;
   border-bottom-left-radius: 1em;
   border-bottom-right-radius: 1em;
+  border: 1px solid black;
+  border-top: none;
   margin: 0 auto;
   overflow: auto;
   padding: 1em;
@@ -468,4 +488,33 @@ form.search input {
 }
 form.search #advanced {
   display: none;
+}
+#currentRef {
+  background: #ddd;
+}
+.dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 9;
+}
+.referencePanel {
+  margin: 37px 200px 0;
+}
+.goToPanel,
+.searchPanel {
+  bottom: 0;
+  overflow: scroll;
+  position: fixed;
+  top: 37px;
+  width: 200px;
+}
+.goToPanel {
+  border-right: 1px solid #000;
+  left: 0;
+}
+.searchPanel {
+  border-left: 1px solid #000;
+  right: 0;
 }

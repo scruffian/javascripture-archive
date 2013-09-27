@@ -15,12 +15,10 @@
 			}
 			console.log( typeof ( $this ) );
 			if ( typeof ( $this ) !== 'undefined' ) {
-				console.log( $this );
+				console.log( $this.data() );
 				document.getElementById( 'bookSelect' ).value = $this.data( 'book' );
 				document.getElementById( 'chapterSelect' ).value = $this.data( 'chapter' );				
 			}
-		}, {
-			context: '#reference'
 		} );
 	} );
 } )( jQuery );

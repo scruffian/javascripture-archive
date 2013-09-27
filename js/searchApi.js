@@ -19,8 +19,8 @@
             return this.results.references;
 		},
         doesDataMatchTerm: function(type, data, term) {
-        	var data = data.toLowerCase(),
-        	    term = term.toLowerCase();
+			data = data.toLowerCase();
+			term = term.toLowerCase();
         	if ( data === term ) { //exact match
         		return true;
         	}
@@ -94,13 +94,13 @@
 									termString = parameters[type];
 
 								if ( termString !== undefined && termString !== '') {
-									if ( wordObject !== undefined && typeof wordObject[type] !== 'undefined' ) { //sometimes wordObjects are undefined in hebrew
+									if ( wordObject !== undefined && typeof wordObject[typeKey] !== 'undefined' ) { //sometimes wordObjects are undefined in hebrew
 										var terms = termString.split(' '),
 											termsLength = termsLength + terms.length,
 											matchesLength = 0;
 
 										$.each(terms, function (key, term) {
-											if ( self.doesDataMatchTerm(type, wordObject[type], term) ) {
+											if ( self.doesDataMatchTerm(type, wordObject[typeKey], term) ) {
 												if (parameters.clusivity === 'exclusive' ) {
 													self.results.matches[term] = true;
 												} else {
@@ -109,7 +109,7 @@
 											}
 										});
 									}
-								}								
+								}
 							}
 
 							//terms are combined for exclusive searches here							
@@ -128,7 +128,7 @@
 
 						});
 					});
-				});				
+				});
 			});
 
 		},

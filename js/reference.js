@@ -1,6 +1,7 @@
+var reference;
 ( function ( $ ) {
-	$.fn.scrollStopped = function(callback) {          
-	    $(this).scroll(function(){
+	$.fn.scrollStopped = function(callback) {
+	    $(this).scroll( function () {
 	        var self = this, $this = $(self);
 	        if ($this.data('scrollTimeout')) {
 	          clearTimeout($this.data('scrollTimeout'));
@@ -9,7 +10,7 @@
 	    });
 	};
 
-	var reference = {
+	reference = {
 		load: function( reference ) {
 			var book = reference.book,
 			    chapter = reference.chapter,
@@ -54,10 +55,11 @@
 			if ( undefined === offset ) {
 				offset = 0;
 			}
-			$('#verse').closest('.panel').scrollTop(0);
+			$('body').scrollTop(0);
+			offset = offset - $('.dock').height();
 			if(verse.length > 0) {
 //				$('#verse').closest('.panel').scrollTop(verse.offset().top - $('.dock').height() - $('h1').height() );
-				$('#verse').closest('.panel').scrollTo( verse, { offset: offset } );
+				$('body').scrollTo( verse, { offset: offset } );
 			}
 			
 			$( document ).trigger( 'createWayPoint' );				
@@ -102,6 +104,13 @@
 			}
 			
 			this.scrollToVerse( $anchorPoint, offset );
+		},
+		getClassName: function ( strongsNumber ) {
+			if ( strongsObjectWithFamilies[ strongsNumber ] ) {
+				return strongsObjectWithFamilies[ strongsNumber ].family;
+			} else {
+				return strongsNumber;
+			}
 		}
 	};
 	
@@ -160,10 +169,14 @@
 	}
 	
 	function createWordString( wordArray, language ) {
-		var wordString = '';
-		var family = '';
+		var wordString = '',
+		    family = '',
+		    lemma = wordArray[ 1 ];
+		if ( strongsObjectWithFamilies[ wordArray[ 1 ] ] ) {
+			family = strongsObjectWithFamilies[ wordArray[ 1 ] ].family;
+		}
 		wordString += '<span'; 
-		wordString += ' class="' + wordArray[1] + '"';
+		wordString += ' class="' + reference.getClassName( lemma ) + '"';
 		wordString += ' title="' + wordArray[1];
 		if ( wordArray[2] ) {
 			wordString += ' ' + wordArray[2];
@@ -243,17 +256,18 @@
 	    timer(startDate, endDate);
 	});
 	
-	$( '#reference' ).scrollStopped( function() {
-		var offsetTop = $( '.dock' ).height() - $( '#verse' ).offset().top,
-		    verseHeight = $( '#verse' ).height() - $( window ).height() + $( '.dock' ).height(),
+	$( window ).scrollStopped( function() {
+		var scrollTop = $( 'body' ).scrollTop(),
+		    verseHeight = $( '.referencePanel' ).height() - $( window ).height() + $( '.dock' ).height(),
 		    anchoringData;
-
-		if ( offsetTop <= 0 ) {
+		if ( scrollTop <= 0 ) {
+			console.log('prev');
 			var prev = $( '.three-references' ).data( 'prev' );
 			anchoringData = reference.getAnchoringData( 'prev' );
 			reference.load( prev ).anchorReference( anchoringData );
 		}
-		if ( offsetTop >= verseHeight ) {
+		if ( scrollTop >= verseHeight ) {
+			console.log('next');
 			var next = $( '.three-references' ).data( 'next' );
 			anchoringData = reference.getAnchoringData( 'next' );
 			reference.load( next ).anchorReference( anchoringData );

@@ -4,7 +4,7 @@
 		var methods = {
 			open: function () {
 				$( '.popup').popup( 'close' );
-				$this.show();
+				$this.show().find( 'input:first' ).val('').focus();
 			},
 			close: function () {
 				$this.hide();

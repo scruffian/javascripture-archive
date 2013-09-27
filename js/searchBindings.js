@@ -89,6 +89,8 @@
 			$('#referenceTracking #'+trackingBoxId).append(references);
 		}
 		goToFirstReference();
+//		$('.popup').popup( 'close' );
+
 		var endDate = new Date();
 		timer(startDate, endDate);
 	}

@@ -219,16 +219,6 @@
         	event.preventDefault();
         	$('ol#bookmarks').append(createReferenceListItem(currentReference()));
         });
-		$('body').mouseleave(function(event) {
-			//if(event.clientY < 1) {
-				$('.dock').animate({top: '0'}, 100);
-			//}
-		}); //TODO, break the current animation...
-		$('body').mouseover(function(event) {
-			if(event.clientY > 50) {
-				$('.dock').animate({top: '-50px'}, 100);
-			}
-		});
 		$(document).on('click', '.collapsable h2 a.remove', function(event){
 			event.preventDefault();
 			$(this).closest('.collapsable').remove();
@@ -244,10 +234,10 @@
 		$('.changeStyle').change(function(){
 			$('#'+$(this).attr('name')).html('body { '+$(this).val()+'}');
 		});
-		$(window).resize(function(){
+/*		$(window).resize(function(){
 			resizeWrapperToWindow();
-		});
-		$('.bookSelect a').bind( 'mousemove', function(event) {
+		});*/
+		$('.bookSelect a').bind( 'mousemove', 'touchmove', function(event) {
 			var numberOfChapters = parseInt( $(this).data( 'chapters' ), 10 ),
 			    position = event.clientX - $(this).offset().left
 				spacing =  $(this).width() / numberOfChapters,
@@ -265,7 +255,7 @@
 			$( this ).attr( 'href', newHref ).find('.chapter').text( chapter );
 		});
 	});
-function resizeWrapperToWindow() {
+/*function resizeWrapperToWindow() {
 	$('body > .wrapper').css('height',$(window).height()-$('.dock').height() );
 }
-resizeWrapperToWindow();
+resizeWrapperToWindow();*/
