@@ -70,18 +70,25 @@
 			self.results.references = [];
 			self.resetMatches();
 
-			$.each(dataSource, function loopThroughBooks(bookName, book) {
+			//use JS for loop with caching: for (var i = 0, l = myArray.length; i < l; i++) {}
+			for( var bookName in dataSource ) {
+				book = dataSource[ bookName ];
 				$( document ).trigger( 'loading', 'searching ' + bookName );
-				$.each(book, function loopThroughChapters(chapterNumber, chapter) {
+
+				for (var chapterNumber = 0, bookLength = book.length; chapterNumber < bookLength; chapterNumber++) {
+					chapter = book[ chapterNumber ];
 
 					if (parameters.range === 'chapter' && parameters.clusivity === 'exclusive' ) { //only need to do this for exclusive searches
 						self.resetMatches();
 					}
-					$.each(chapter, function loppThroughVerses(verseNumber, verse) {
+					for (var verseNumber = 0, chapterLength = chapter.length; verseNumber < chapterLength; verseNumber++) {
+						verse = chapter[ verseNumber ];
 						if (parameters.range === 'verse' && parameters.clusivity === 'exclusive' ) { //only need to do this for exclusive searches
 							self.resetMatches();
 						}
-						$.each(verse, function (wordNumber, wordObject) {
+						
+						for (var wordNumber = 0, verseLength = verse.length; wordNumber < verseLength; wordNumber++) {
+							var wordObject = verse[ wordNumber ];
 							if (parameters.range === 'word' && parameters.clusivity === 'exclusive' ) { //only need to do this for exclusive searches
 								self.resetMatches();
 							}
@@ -126,10 +133,10 @@
 
 
 
-						});
-					});
-				});
-			});
+						}
+					}
+				}
+			}
 
 		},
 		standarizeWordEndings: function (word) {
