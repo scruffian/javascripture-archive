@@ -1,4 +1,5 @@
-﻿var bible = {};
+define(function () {
+var bible = {};
 bible.Data = {};
 bible.Data.books = [
 ['Genesis','Gen','Ge'],
@@ -37,7 +38,7 @@ bible.Data.books = [
 ['Nahum','Nah','Na'],
 ['Habakkuk','Hab'],
 ['Zephaniah','Zep','Zeph'],
-['Haggia','Hag'],
+['Haggai','Hag'],
 ['Zechariah','Zech','Zec'],
 ['Malachi','Mal'],
 ['Matthew','Matt','Mat','Mt'],
@@ -146,7 +147,22 @@ bible.parseReference = function(textReference) {
 	var verse2 = -1;
 	var input = new String(textReference);
 
-	bookID = bible.getBookId( input )
+	// tear off book name
+	for (var i = bible.Data.books.length - 1; i >= 0; i--) {
+		for (var j = 0; j < bible.Data.books[i].length; j++) {
+			var name = new String(bible.Data.books[i][j]).toLowerCase();
+			var possibleMatch = input.substring(0, Math.floor(name.length, input.length)).toLowerCase();
+
+			if (possibleMatch == name) {
+				bookID = i + 1;
+				input = input.substring(name.length);
+				break;
+			}
+
+		}
+		if (bookID > -1)
+			break;
+	}
 
 	var afterRange = false;
 	var afterSeparator = false;
@@ -337,24 +353,5 @@ bible.Reference = function() {
 	}
 };
 bible.utility = {};
-bible.getBookId = function( textReference ) {
-	var input = textReference;
-	var bookID = -1;
-	// tear off book name
-	for (var i = bible.Data.books.length - 1; i >= 0; i--) {
-		for (var j = 0; j < bible.Data.books[i].length; j++) {
-			var name = new String(bible.Data.books[i][j]).toLowerCase();
-			var possibleMatch = input.substring(0, Math.floor(name.length, input.length)).toLowerCase();
-
-			if (possibleMatch == name) {
-				bookID = i + 1;
-				input = input.substring(name.length);
-				break;
-			}
-
-		}
-		if (bookID > -1)
-			break;
-	}
-	return bookID;
-}
+return bible;
+});
